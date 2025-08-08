@@ -1,0 +1,14 @@
+{
+  "name": "trading_platform",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "docker:build": "docker build -t trading_platform_backend docker",
+    "docker:run": "docker run -it -v C:/Users/Alcir/Desktop/projects/trading_platform:/app trading_platform_backend bash",
+    "compose:up": "docker compose -f  docker/docker-compose.yaml up -d --build",
+    "compose:down": "docker compose -f docker/docker-compose.yaml -v down",
+    "compose:exec": "docker compose -f docker/docker-compose.yaml exec -it backend bash"
+    
+  }
+}
