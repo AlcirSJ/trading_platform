@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { AccountDAODatabase } from "./AccountDAO";
 import AccountService from "./AccountService";
-
 const app = express();
 app.use(express.json());
 app.use(cors());
