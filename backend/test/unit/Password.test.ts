@@ -1,4 +1,5 @@
-import Password from "../../src/domain/Password";
+import Password from "../../src/domain/Password ";
+
 
 test.each([
     "asdQWE123"

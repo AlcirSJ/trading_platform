@@ -2,17 +2,18 @@ import Deposit from "../../src/application/usecase/Deposit";
 import ExecuteOrder from "../../src/application/usecase/ExecuteOrder";
 import GetAccount from "../../src/application/usecase/GetAccount";
 import GetDepth from "../../src/application/usecase/GetDepth";
-import GetOrder from "../../src/application/usecase/GetOrder";
+import GetOrder from "../../src/application/usecase/GetOrder ";
 import PlaceOrder from "../../src/application/usecase/PlaceOrder";
 import Signup from "../../src/application/usecase/Signup";
 import Withdraw from "../../src/application/usecase/Withdraw";
 import { AccountAssetDAODatabase } from "../../src/infra/dao/AccountAssetDAO";
 import { AccountDAODatabase } from "../../src/infra/dao/AccountDAO";
-import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection";
+import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection ";
 import Registry from "../../src/infra/di/Registry";
-import { MediatorMemory } from "../../src/infra/mediator/Mediator";
+import { MediatorMemory } from "../../src/infra/mediator/Mediator ";
 import { AccountRepositoryDatabase } from "../../src/infra/repository/AccountRepository";
 import { OrderRepositoryDatabase } from "../../src/infra/repository/OrderRepository";
+
 
 let connection: DatabaseConnection;
 let signup: Signup;
