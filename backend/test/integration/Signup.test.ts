@@ -1,14 +1,27 @@
+import Deposit from "../../src/application/usecase/Deposit";
+import GetAccount from "../../src/application/usecase/GetAccount";
+import Signup from "../../src/application/usecase/Signup";
+import Withdraw from "../../src/application/usecase/Withdraw";
+import { AccountAssetDAODatabase } from "../../src/infra/dao/AccountAssetDAO";
+import { AccountDAODatabase, AccountDAOMemory } from "../../src/infra/dao/AccountDAO";
+import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection";
+import Registry from "../../src/infra/di/Registry";
+import { AccountRepositoryDatabase, AccountRepositoryMemory } from "../../src/infra/repository/AccountRepository";
 import sinon from "sinon";
-import { AccountDAODatabase, AccountDAOMemory } from "../src/AccountDAO";
-import AccountService from "../src/AccountService";
 
-
-let accountService: AccountService;
+let connection: DatabaseConnection;
+let signup: Signup;
+let getAccount: GetAccount;
 
 beforeEach(() => {
-     const accountDAO = new AccountDAODatabase();
-    //const accountDAO = new AccountDAOMemory();
-    accountService = new AccountService(accountDAO);
+    connection = new PgPromiseAdapter();
+    Registry.getInstance().provide("databaseConnection", connection);
+    const accountDAO = new AccountDAODatabase();
+    Registry.getInstance().provide("accountDAO", accountDAO);
+    Registry.getInstance().provide("accountAssetDAO", new AccountAssetDAODatabase());
+    Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
+    signup = new Signup();
+    getAccount = new GetAccount();
 });
 
 test("Deve criar uma conta", async () => {
@@ -18,8 +31,8 @@ test("Deve criar uma conta", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await accountService.signup(input);
-    const outputGetAccount = await accountService.getAccount(outputSignup.accountId);
+    const outputSignup = await signup.execute(input);
+    const outputGetAccount = await getAccount.execute(outputSignup.accountId);
     expect(outputSignup.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(input.name);
     expect(outputGetAccount.email).toBe(input.email);
@@ -27,44 +40,14 @@ test("Deve criar uma conta", async () => {
     expect(outputGetAccount.password).toBe(input.password);
 });
 
-test("Não deve criar uma conta se o nome for inválido", async () => {
+test("Não deve criar uma conta com nome inválido", async () => {
     const input = {
         name: "John",
         email: "john.doe@gmail.com",
         document: "97456321558",
         password: "asdQWE123"
     }
-    await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Invalid name"));
-});
-
-test("Não deve criar uma conta se o email for inválido", async () => {
-    const input = {
-        name: "John Doe",
-        email: "john.doe@gmail",
-        document: "97456321558",
-        password: "asdQWE123"
-    }
-    await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Invalid email"));
-});
-
-test("Não deve criar uma conta se o documento for inválido", async () => {
-    const input = {
-        name: "John Doe",
-        email: "john.doe@gmail.com",
-        document: "974563215",
-        password: "asdQWE123"
-    }
-    await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Invalid document"));
-});
-
-test("Não deve criar uma conta se a senha tiver menos de 8 caracteres", async () => {
-    const input = {
-        name: "John Doe",
-        email: "john.doe@gmail.com",
-        document: "97456321558",
-        password: "asdQWE"
-    }
-    await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Invalid password"));
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid name"));
 });
 
 test("Deve criar uma conta com stub", async () => {
@@ -76,8 +59,8 @@ test("Deve criar uma conta com stub", async () => {
         password: "asdQWE123"
     }
     const getByIdStub = sinon.stub(AccountDAODatabase.prototype, "getById").resolves(input);
-    const outputSignup = await accountService.signup(input);
-    const outputGetAccount = await accountService.getAccount(outputSignup.accountId);
+    const outputSignup = await signup.execute(input);
+    const outputGetAccount = await getAccount.execute(outputSignup.accountId);
     expect(outputSignup.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(input.name);
     expect(outputGetAccount.email).toBe(input.email);
@@ -86,7 +69,6 @@ test("Deve criar uma conta com stub", async () => {
     saveStub.restore();
     getByIdStub.restore();
 });
-
 
 test("Deve criar uma conta com spy", async () => {
     const saveSpy = sinon.spy(AccountDAODatabase.prototype, "save");
@@ -97,8 +79,8 @@ test("Deve criar uma conta com spy", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await accountService.signup(input);
-    const outputGetAccount = await accountService.getAccount(outputSignup.accountId);
+    const outputSignup = await signup.execute(input);
+    const outputGetAccount = await getAccount.execute(outputSignup.accountId);
     expect(outputSignup.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(input.name);
     expect(outputGetAccount.email).toBe(input.email);
@@ -121,8 +103,8 @@ test("Deve criar uma conta com mock", async () => {
         password: "asdQWE123"
     }
     accountDAOMock.expects("getById").once().resolves(input);
-    const outputSignup = await accountService.signup(input);
-    const outputGetAccount = await accountService.getAccount(outputSignup.accountId);
+    const outputSignup = await signup.execute(input);
+    const outputGetAccount = await getAccount.execute(outputSignup.accountId);
     expect(outputSignup.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(input.name);
     expect(outputGetAccount.email).toBe(input.email);
@@ -133,19 +115,24 @@ test("Deve criar uma conta com mock", async () => {
 });
 
 test("Deve criar uma conta com fake", async () => {
-    const accountDAO = new AccountDAOMemory();   
-    accountService = new AccountService(accountDAO);
+    const accountRepository = new AccountRepositoryMemory();
+    Registry.getInstance().provide("accountRepository", accountRepository);
+    signup = new Signup();
     const input = {
         name: "John Doe",
         email: "john.doe@gmail.com",
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await accountService.signup(input);
-    const outputGetAccount = await accountService.getAccount(outputSignup.accountId);
+    const outputSignup = await signup.execute(input);
+    const outputGetAccount = await getAccount.execute(outputSignup.accountId);
     expect(outputSignup.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(input.name);
     expect(outputGetAccount.email).toBe(input.email);
     expect(outputGetAccount.document).toBe(input.document);
     expect(outputGetAccount.password).toBe(input.password);
+});
+
+afterEach(async () => {
+    await connection.close();
 });

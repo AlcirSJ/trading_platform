@@ -13,32 +13,16 @@ import type AccountGateway from './AccountGateway';
   });
   const accountGateway = inject("accountGateway") as AccountGateway;
 
-  // async function signup () {
-  //   const input = form.value;
-  //   const output = await accountGateway.save(input);
-  //   if (output.accountId) {
-  //     form.value.accountId = output.accountId;
-  //     form.value.message = "success";
-  //   } else {
-  //     form.value.message = output.message;
-  //   }
-  // }
-
-
-  async function signup() {
+  async function signup () {
     const input = form.value;
-   const response = await fetch("http://localhost:3000/signup", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify(input)
-  });
-  const output = await response.json();
-  if(output.accountId){
-    form.value.accountId = output.accountId;
-    form.value.message = "success";
-  }}
+    const output = await accountGateway.save(input);
+    if (output.accountId) {
+      form.value.accountId = output.accountId;
+      form.value.message = "success";
+    } else {
+      form.value.message = output.message;
+    }
+  }
 </script>
 
 <template>

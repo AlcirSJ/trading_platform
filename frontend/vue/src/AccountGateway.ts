@@ -1,4 +1,3 @@
-
 export default interface AccountGateway {
     save (input: any): Promise<any>;
 }
