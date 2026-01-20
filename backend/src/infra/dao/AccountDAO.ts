@@ -1,4 +1,4 @@
-import DatabaseConnection from "../database/DatabaseConnection ";
+import DatabaseConnection from "../database/DatabaseConnection";
 import { inject } from "../di/Registry";
 
 export default interface AccountDAO {
