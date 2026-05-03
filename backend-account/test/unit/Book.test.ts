@@ -3,6 +3,7 @@ import Book from "../../src/domain/Book";
 import Order from "../../src/domain/Order";
 import Registry from "../../src/infra/di/Registry";
 import { MediatorMemory } from "../../src/infra/mediator/Mediator";
+import { test, expect } from "@jest/globals";
 
 test("Deve testar a execução de ordens de compra e venda", async () => {
     const mediator = new MediatorMemory();

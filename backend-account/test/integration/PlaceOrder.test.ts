@@ -10,9 +10,11 @@ import { AccountAssetDAODatabase } from "../../src/infra/dao/AccountAssetDAO";
 import { AccountDAODatabase } from "../../src/infra/dao/AccountDAO";
 import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection";
 import Registry from "../../src/infra/di/Registry";
+import { CieloPaymentProcessor } from "../../src/infra/fallback/PaymentProcessor";
 import { MediatorMemory } from "../../src/infra/mediator/Mediator";
 import { AccountRepositoryDatabase } from "../../src/infra/repository/AccountRepository";
 import { OrderRepositoryDatabase } from "../../src/infra/repository/OrderRepository";
+import { test, expect, beforeEach, afterEach } from "@jest/globals";
 
 let connection: DatabaseConnection;
 let signup: Signup;
@@ -31,6 +33,7 @@ beforeEach(() => {
     Registry.getInstance().provide("accountAssetDAO", new AccountAssetDAODatabase());
     Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
     Registry.getInstance().provide("orderRepository", new OrderRepositoryDatabase());
+    Registry.getInstance().provide("paymentProcessor", new CieloPaymentProcessor());
     const mediator = new MediatorMemory();
     Registry.getInstance().provide("mediator", mediator);
     signup = new Signup();
@@ -242,7 +245,7 @@ test("Deve criar três ordens de compra e uma ordem de venda, com valores difere
     expect(outputGetDepth.buys).toHaveLength(0);
     expect(outputGetDepth.sells).toHaveLength(0);
     const outputGetOrder3 = await getOrder.execute(outputPlaceOrder3.orderId);
-    console.log(outputGetOrder3);
+    // console.log(outputGetOrder3);
 });
 
 afterEach(async () => {

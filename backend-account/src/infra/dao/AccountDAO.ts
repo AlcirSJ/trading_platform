@@ -1,3 +1,5 @@
+import Account from "../../domain/Account";
+import Order from "../../domain/Order";
 import DatabaseConnection from "../database/DatabaseConnection";
 import { inject } from "../di/Registry";
 

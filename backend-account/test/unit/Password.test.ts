@@ -1,4 +1,5 @@
 import Password from "../../src/domain/Password";
+import { test, expect } from "@jest/globals";
 
 test.each([
     "asdQWE123"

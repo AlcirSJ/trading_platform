@@ -1,4 +1,4 @@
-import { column, Model, model } from "./ORM";
+import { model, Model, column } from "./ORM";
 
 @model("ccca", "account_asset")
 export class AccountAssetModel extends Model {

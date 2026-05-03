@@ -4,7 +4,7 @@ import Registry from "../../src/infra/di/Registry";
 import { AccountDAODatabase } from "../../src/infra/dao/AccountDAO";
 import { AccountRepositoryDatabase, AccountRepositoryORM } from "../../src/infra/repository/AccountRepository";
 import Account from "../../src/domain/Account";
-import { AccountAssetDAODatabase } from "../../src/infra/dao/AccountAssetDAO";
+import { test, expect } from "@jest/globals";
 import ORM from "../../src/infra/orm/ORM";
 
 test("Deve persistir uma conta", async () => {
@@ -20,7 +20,7 @@ test("Deve persistir uma conta", async () => {
     account.deposit("BTC", 100);
     await accountRepository.save(account);
     const savedAccount = await accountRepository.getById(account.accountId);
-    console.log(savedAccount);
+    // console.log(savedAccount);
     expect(savedAccount.accountId).toBe(account.accountId);
     expect(savedAccount.getName()).toBe(account.getName());
     expect(savedAccount.getEmail()).toBe(account.getEmail());

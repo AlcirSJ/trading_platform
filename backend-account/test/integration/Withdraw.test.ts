@@ -6,7 +6,9 @@ import { AccountAssetDAODatabase } from "../../src/infra/dao/AccountAssetDAO";
 import { AccountDAODatabase } from "../../src/infra/dao/AccountDAO";
 import DatabaseConnection, { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection";
 import Registry from "../../src/infra/di/Registry";
+import { CieloPaymentProcessor } from "../../src/infra/fallback/PaymentProcessor";
 import { AccountRepositoryDatabase } from "../../src/infra/repository/AccountRepository";
+import { test, expect, beforeEach, afterEach } from "@jest/globals";
 
 let connection: DatabaseConnection;
 let signup: Signup;
@@ -21,6 +23,7 @@ beforeEach(() => {
     Registry.getInstance().provide("accountDAO", accountDAO);
     Registry.getInstance().provide("accountAssetDAO", new AccountAssetDAODatabase());
     Registry.getInstance().provide("accountRepository", new AccountRepositoryDatabase());
+    Registry.getInstance().provide("paymentProcessor", new CieloPaymentProcessor());
     signup = new Signup();
     getAccount = new GetAccount();
     deposit = new Deposit();

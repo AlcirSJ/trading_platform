@@ -1,5 +1,6 @@
 import GroupOrders from "../../src/domain/GroupOrders";
 import Order from "../../src/domain/Order";
+import { test, expect } from "@jest/globals";
 
 test("Deve agrupar as ordens de compra e venda", function () {
     const order1 = Order.create(crypto.randomUUID(), "BTC-USD", "buy", 1, 85000);

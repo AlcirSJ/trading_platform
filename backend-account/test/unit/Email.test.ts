@@ -1,4 +1,5 @@
 import Email from "../../src/domain/Email";
+import { test, expect } from "@jest/globals";
 
 test.each([
     "john.doe@gmail.com"

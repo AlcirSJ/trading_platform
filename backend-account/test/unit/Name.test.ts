@@ -1,4 +1,5 @@
 import Name from "../../src/domain/Name";
+import { test, expect } from "@jest/globals";
 
 test.each([
     "John Doe",
